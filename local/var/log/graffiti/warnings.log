@@ -1,0 +1,21 @@
+Jun 18 15:56:34: main: Command pipe created
+Jun 18 15:56:34: main: Initializing Ocsipersist-dbm...
+Jun 18 15:56:34: main: Launching a new Ocsidbm process: /home/kokuyou/.opam/4.00.1/lib/ocsigenserver/extensions/ocsidbm on directory local/var/data/graffiti/ocsipersist.
+Jun 18 15:56:35: main: ...Initialization of Ocsipersist-dbm complete
+Jun 18 15:56:35: main: While parsing config file, tag <host>: No defaulthostname, assuming it is "www.kokuyouwind.com"
+Jun 18 15:56:35: main: Ocsigen has been launched (initialisations ok)
+Jun 18 15:58:28: main: Initializing Ocsipersist-dbm...
+Jun 18 15:58:28: main: Launching a new Ocsidbm process: /home/kokuyou/.opam/4.00.1/lib/ocsigenserver/extensions/ocsidbm on directory local/var/data/graffiti/ocsipersist.
+Jun 18 15:58:29: main: ...Initialization of Ocsipersist-dbm complete
+Jun 18 15:58:29: main: While parsing config file, tag <host>: No defaulthostname, assuming it is "www.kokuyouwind.com"
+Jun 18 15:58:29: main: Ocsigen has been launched (initialisations ok)
+Jul  1 15:19:50: main: Initializing Ocsipersist-dbm...
+Jul  1 15:19:50: main: Launching a new Ocsidbm process: /home/kokuyou/.opam/4.00.1/lib/ocsigenserver/extensions/ocsidbm.opt on directory local/var/data/graffiti/ocsipersist.
+Jul  1 15:19:51: main: ...Initialization of Ocsipersist-dbm complete
+Jul  1 15:19:51: main: While parsing config file, tag <host>: No defaulthostname, assuming it is "www.kokuyouwind.com"
+Jul  1 15:19:51: main: Ocsigen has been launched (initialisations ok)
+Jul  7 14:06:08: main: Initializing Ocsipersist-dbm...
+Jul  7 14:06:08: main: Launching a new Ocsidbm process: /home/kokuyou/.opam/4.00.1/lib/ocsigenserver/extensions/ocsidbm on directory local/var/data/graffiti/ocsipersist.
+Jul  7 14:06:10: main: ...Initialization of Ocsipersist-dbm complete
+Jul  7 14:06:10: main: While parsing config file, tag <host>: No defaulthostname, assuming it is "www.kokuyouwind.com"
+Jul  7 14:06:10: main: Ocsigen has been launched (initialisations ok)
