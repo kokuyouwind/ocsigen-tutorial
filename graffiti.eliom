@@ -3,6 +3,8 @@
      and server-code *)
   open Eliom_content.Html5.D
   open Lwt
+  type messages = ((int * int * int) * int * (int * int) * (int * int))
+    deriving (Json)
 }}
 
 module My_app =
@@ -15,6 +17,7 @@ module My_app =
   let height = 400
 }}
 
+let bus = Eliom_bus.create Json.t<messages>
 let canvas_elt =
   canvas ~a:[a_width width; a_height height]
     [pcdata "your browser doesn't support canvas"]
@@ -56,7 +59,11 @@ let page =
       ((0, 0, 0), 5, (oldx, oldy), (!x, !y))
     in
 
-    let line ev = draw ctx (compute_line ev); Lwt.return () in
+    let line ev =
+      let v = compute_line ev in
+      let _ = Eliom_bus.write %bus v in
+      draw ctx v;
+      Lwt.return () in
 
     Lwt.async
       (fun () ->
@@ -65,7 +72,8 @@ let page =
           (fun ev _ ->
             set_coord ev; line ev >>= fun () ->
             Lwt.pick [mousemoves Dom_html.document (fun x _ -> line x);
-                      mouseup Dom_html.document >>= line]))
+                      mouseup Dom_html.document >>= line]));
+    Lwt.async (fun () -> Lwt_stream.iter (draw ctx) (Eliom_bus.stream %bus))
 }}
 
 let main_service =
