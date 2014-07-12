@@ -21,14 +21,20 @@ let bus = Eliom_bus.create Json.t<messages>
 let canvas_elt =
   canvas ~a:[a_width width; a_height height]
     [pcdata "your browser doesn't support canvas"]
+let slider = int_input
+   ~a:[a_id "slider"; a_input_min 1.; a_input_max 80.]
+   ~input_type:`Range ()
 
 let page =
   (html
-    (head (title (pcdata "Graffiti")) [])
+    (Eliom_tools.F.head ~title:"Graffiti"
+       ~css:[
+         ["css";"graffiti.css"];]
+       ~js:[] ())
     (body [h1 [pcdata "Graffiti"];
-           canvas_elt]))
+           canvas_elt;div [slider]] ))
 
- {client{
+{client{
   let draw ctx ((r, g, b), size, (x1, y1), (x2, y2)) =
     let color = CSS.Color.string_of_t (CSS.Color.rgb r g b) in
     ctx##strokeStyle <- (Js.string color);
@@ -43,6 +49,10 @@ let page =
   let init_client () =
 
     let canvas = Eliom_content.Html5.To_dom.of_canvas %canvas_elt in
+    (* Color of the brush *)
+    let colorpicker = Ojw_color_picker.create ~width:150 () in
+    Ojw_color_picker.append_at (Dom_html.document##body) colorpicker;
+    Ojw_color_picker.init_handler colorpicker;
     let ctx = canvas##getContext (Dom_html._2d_) in
     ctx##lineCap <- Js.string "round";
 
@@ -56,7 +66,10 @@ let page =
     let compute_line ev =
       let oldx = !x and oldy = !y in
       set_coord ev;
-      ((0, 0, 0), 5, (oldx, oldy), (!x, !y))
+      let color = Ojw_color_picker.get_rgb colorpicker in
+      let size_slider = Eliom_content.Html5.To_dom.of_input %slider in
+      let size = int_of_string (Js.to_string size_slider##value) in
+      (color, size, (oldx, oldy), (!x, !y))
     in
 
     let line ev =
