@@ -24,18 +24,18 @@ let canvas_elt =
   canvas ~a:[a_width width; a_height height]
     [pcdata "your browser doesn't support canvas"]
 let slider = int_input
-   ~a:[a_id "slider"; a_input_min 1.; a_input_max 80.]
-   ~input_type:`Range ()
-   ~value:3
+  ~a:[a_id "slider"; a_input_min 1.; a_input_max 80.]
+  ~input_type:`Range ()
+  ~value:3
 
 let page =
   (html
-    (Eliom_tools.F.head ~title:"Graffiti"
-       ~css:[
-         ["css";"graffiti.css"];]
-       ~js:[] ())
-    (body [h1 [pcdata "Graffiti"];
-           canvas_elt;div [slider]] ))
+     (Eliom_tools.F.head ~title:"Graffiti"
+        ~css:[
+          ["css";"graffiti.css"];]
+        ~js:[] ())
+     (body [h1 [pcdata "Graffiti"];
+            canvas_elt;div [slider]] ))
 
 {client{
   let draw ctx ((r, g, b), size, (x1, y1), (x2, y2)) =
@@ -70,12 +70,12 @@ let draw_server =
   )
 
 let image_string =
-   (fun () ->
-     let b = Buffer.create 10000 in
+  (fun () ->
+    let b = Buffer.create 10000 in
      (* Output a PNG in a string *)
-     Cairo.PNG.write_to_stream surface (Buffer.add_string b);
-     Buffer.contents b
-   )
+    Cairo.PNG.write_to_stream surface (Buffer.add_string b);
+    Buffer.contents b
+  )
 
 
 let imageservice =
@@ -97,13 +97,13 @@ let imageservice =
 
     (* The initial image: *)
     let img =
-  Eliom_content.Html5.To_dom.of_img
-    (img ~alt:"canvas"
-       ~src:(make_uri ~service:%imageservice ())
-       ())
+      Eliom_content.Html5.To_dom.of_img
+        (img ~alt:"canvas"
+           ~src:(make_uri ~service:%imageservice ())
+           ())
     in
     img##onload <- Dom_html.handler
-                (fun ev -> ctx##drawImage(img, 0., 0.); Js._false);
+      (fun ev -> ctx##drawImage(img, 0., 0.); Js._false);
 
     let x = ref 0 and y = ref 0 in
 
@@ -130,11 +130,11 @@ let imageservice =
     Lwt.async
       (fun () ->
         let open Lwt_js_events in
-        mousedowns canvas
-          (fun ev _ ->
-            set_coord ev; line ev >>= fun () ->
-            Lwt.pick [mousemoves Dom_html.document (fun x _ -> line x);
-                      mouseup Dom_html.document >>= line]));
+            mousedowns canvas
+              (fun ev _ ->
+                set_coord ev; line ev >>= fun () ->
+                Lwt.pick [mousemoves Dom_html.document (fun x _ -> line x);
+                          mouseup Dom_html.document >>= line]));
     Lwt.async (fun () -> Lwt_stream.iter (draw ctx) (Eliom_bus.stream %bus))
 }}
 
