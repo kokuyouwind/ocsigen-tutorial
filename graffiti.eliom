@@ -45,6 +45,42 @@ let page =
     ctx##stroke()
 }}
 
+let surface = Cairo.Image.create Cairo.Image.ARGB32 ~width ~height
+
+let draw_server =
+  let rgb_floats_from_ints (r, g, b) =
+    float r /. 255., float g /. 255., float b /. 255. in
+  let ctx = Cairo.create surface in
+  (fun (rgb, size, (x1, y1), (x2, y2)) ->
+    (* Set thickness of brush *)
+    Cairo.set_line_width ctx (float size) ;
+    Cairo.set_line_join ctx Cairo.JOIN_ROUND ;
+    Cairo.set_line_cap ctx Cairo.ROUND ;
+    let red, green, blue =  rgb_floats_from_ints rgb in
+    Cairo.set_source_rgb ctx ~r:red ~g:green ~b:blue ;
+
+    Cairo.move_to ctx (float x1) (float y1) ;
+    Cairo.line_to ctx (float x2) (float y2) ;
+    Cairo.Path.close ctx ;
+    (* Apply the ink *)
+    Cairo.stroke ctx ;
+  )
+
+let image_string =
+   (fun () ->
+     let b = Buffer.create 10000 in
+     (* Output a PNG in a string *)
+     Cairo.PNG.write_to_stream surface (Buffer.add_string b);
+     Buffer.contents b
+   )
+
+
+let imageservice =
+  Eliom_registration.String.register_service
+    ~path:["image"]
+    ~get_params:Eliom_parameter.unit
+    (fun () () -> Lwt.return (image_string (), "image/png"))
+     
 {client{
   let init_client () =
 
@@ -55,6 +91,16 @@ let page =
     Ojw_color_picker.init_handler colorpicker;
     let ctx = canvas##getContext (Dom_html._2d_) in
     ctx##lineCap <- Js.string "round";
+
+    (* The initial image: *)
+    let img =
+  Eliom_content.Html5.To_dom.of_img
+    (img ~alt:"canvas"
+       ~src:(make_uri ~service:%imageservice ())
+       ())
+    in
+    img##onload <- Dom_html.handler
+                (fun ev -> ctx##drawImage(img, 0., 0.); Js._false);
 
     let x = ref 0 and y = ref 0 in
 
@@ -88,6 +134,8 @@ let page =
                       mouseup Dom_html.document >>= line]));
     Lwt.async (fun () -> Lwt_stream.iter (draw ctx) (Eliom_bus.stream %bus))
 }}
+
+let _ = Lwt_stream.iter draw_server (Eliom_bus.stream bus)
 
 let main_service =
   My_app.register_service ~path:[""] ~get_params:Eliom_parameter.unit
