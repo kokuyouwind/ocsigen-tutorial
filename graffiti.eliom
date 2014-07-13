@@ -24,6 +24,7 @@ let canvas_elt =
 let slider = int_input
    ~a:[a_id "slider"; a_input_min 1.; a_input_max 80.]
    ~input_type:`Range ()
+   ~value:3
 
 let page =
   (html
