@@ -3,7 +3,9 @@
      and server-code *)
   open Eliom_content.Html5.D
   open Lwt
-  type messages = ((int * int * int) * int * (int * int) * (int * int))
+  type color = int * int * int deriving (Json)
+  type point = int * int deriving (Json)
+  type messages = color * int * point * point
     deriving (Json)
 }}
 
